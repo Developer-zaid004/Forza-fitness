@@ -16,7 +16,8 @@
     --font-heading: "Roboto", sans-serif;
     --font-body: 'Poppins', sans-serif;
     
-    --transition: all 0.3s ease;
+    --transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, box-shadow 0.3s ease;
+    --transition-fast: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
     --shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
     --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
@@ -38,6 +39,10 @@ body {
     line-height: 1.6;
     overflow-x: hidden;
     background-color: var(--color-white);
+    /* Performance optimizations */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 .container {
@@ -168,8 +173,10 @@ img {
     width: 100%;
     padding: 20px 0;
     background-color: transparent;
-    transition: var(--transition);
+    transition: background-color 0.3s ease, backdrop-filter 0.3s ease, padding 0.3s ease;
     z-index: 1000;
+    /* Performance optimization */
+    will-change: background-color, backdrop-filter, padding;
 }
 
 .navbar.scrolled {
@@ -456,12 +463,15 @@ img {
 }
 
 .hero-content {
+    margin-top: 3px;
     position: relative;
     z-index: 2;
     text-align: center;
     max-width: 1000px;
     padding: 0 20px;
-    animation: fadeInUp 1.2s ease;
+    animation: ease-in-out 2s;
+    /* Performance optimization */
+    will-change: transform, opacity;
 }
 
 @keyframes fadeInUp {
@@ -914,6 +924,8 @@ img {
     transition: var(--transition);
     position: relative;
     overflow: hidden;
+    /* Performance optimization */
+    will-change: transform, box-shadow;
 }
 
 .program-card::before {
@@ -1122,6 +1134,8 @@ img {
     border: 2px solid rgb(255, 255, 255);
     transition: var(--transition);
     position: relative;
+    /* Performance optimization */
+    will-change: transform, border-color, background-color;
 }
 
 .pricing-card:hover {
@@ -2407,6 +2421,79 @@ img {
             animation: none;
             opacity: 0.3;
         }
+    }
+}
+
+/* Low-End Device Optimizations for Hero Section */
+@media (max-width: 768px), (max-height: 600px), (-webkit-transform-3d) {
+    /* Disable complex hero animations on low-end devices */
+    .hero::before,
+    .hero::after {
+        animation: none !important;
+        background: none !important;
+        content: none !important;
+    }
+
+    /* Simplify hero overlay */
+    .hero-overlay {
+        background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.7) 100%) !important;
+    }
+
+    /* Disable complex text animations */
+    .hero-title {
+        animation: none !important;
+        text-shadow: none !important;
+    }
+
+    .hero-title-emphasis {
+        animation: none !important;
+    }
+
+    .hero-subtitle {
+        animation: none !important;
+    }
+
+    .hero-description {
+        animation: none !important;
+    }
+
+    .hero-badge {
+        animation: none !important;
+    }
+
+    .hero-buttons {
+        animation: none !important;
+    }
+
+    .scroll-indicator {
+        animation: none !important;
+    }
+
+    /* Simplify background image loading */
+    .hero-background-image {
+        will-change: auto;
+    }
+}
+
+/* Performance optimization for very low-end devices */
+@media (max-width: 480px), (max-height: 500px) {
+    /* Disable all hero animations */
+    .hero * {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    /* Simplify hero completely */
+    .hero {
+        background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%) !important;
+    }
+
+    .hero-background-image {
+        display: none !important;
+    }
+
+    .hero-overlay {
+        background: rgba(0, 0, 0, 0.5) !important;
     }
 
     /* Ensure all interactive elements meet minimum touch target size */
